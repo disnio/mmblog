@@ -1,26 +1,41 @@
-const config = require('./config');
-var http = require('http');
-var express = require("express");
-var path = require("path");
-var morgan = require("morgan");
-var cookieParser = require("cookie-parser");
-var bodyParser = require("body-parser");
 
+import config from './config';
+import express from 'express';
+import path from 'path';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 // var methodOverride = require('method-override');
 // var session = require('express-session');
-var compression = require('compression');
-var debug = require('debug')('server:server');
 // var csrf = require('csurf');
-var errorHandler = require('errorhandler');
+import compression from 'compression';
+import errorhandler from 'errorhandler';
+import mongoose from 'mongoose';
 
-const mongoose = require('mongoose');
+import index from './router/index';
+import article from './router/article';
 
-global.db = mongoose.createConnection(config.mongodb.url, {
-    useMongoClient: true
+const db = mongoose.connect(config.mongodb.url, {
+    useMongoClient: true,
+    promiseLibrary: Promise
 });
-db.on('error', console.log);
-var app = express();
 
+db.once('open' ,() => {
+    console.log('连接数据库成功')
+})
+
+db.on('error', function(error) {
+    console.error('Error in MongoDb connection: ' + error);
+    mongoose.disconnect();
+});
+
+db.on('close', function() {
+    console.log('数据库断开，重新连接数据库');
+    mongoose.connect(config.url, {server:{auto_reconnect:true}});
+});
+
+const app = express();
+console.log(Promise)
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'ejs');
 //要放在响应的最外
@@ -44,28 +59,26 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //日志在静态内容后面
-// app.all('*', function (req, res, next) {
-//     // 带 cookie 发送文件响应必须明确设置域，不能简单的用 *
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Methods", "HEAD, PUT, POST, GET, DELETE, OPTIONS");
-//     res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Range, Content-Disposition, Content-Description");
-//     res.header("Access-Control-Allow-Credentials", true);
-//     // res.header("Content-Type", "application/json;charset=utf-8");
-//     next();
-// });
+app.all('*', function (req, res, next) {
+    // 带 cookie 发送文件响应必须明确设置域，不能简单的用 *
+    res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+    res.header("Access-Control-Allow-Methods", "HEAD, PUT, POST, GET, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With, Authorization, Content-Type, Content-Range, Content-Disposition, Content-Description");
+    res.header("Access-Control-Allow-Credentials", true);
+    // res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+});
 
 if (process.env.NODE_ENV === 'development') {
     app.use(errorhandler())
 }
 
-const index = require('./router/index');
-const article = require('./router/article');
+
 app.use('/', index)
 app.use('/api/article', article)
 
 // server start
-var server = http.createServer(app);
-server.listen(config.app.port, function() {
+
+app.listen(config.app.port, function() {
     console.log("run in ", config.app.port)
-    debug('Listening on ' + config.app.port);
 });

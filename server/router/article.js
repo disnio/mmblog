@@ -1,10 +1,15 @@
-const express = require('express');
+import express from 'express';
+import model from '../model/article';
+// import confirmToken from '../middleware/confirmToken';
 const router = express.Router();
-const model = require('../model/article');
-const confirmToken = require('../middleware/confirmToken');
 
-router.get('/', function(req, res){
-    res.status(200).send("my model name is: ")
+router.get('/', function(req, res) {
+    // model.find({}, function(err, docs){
+    //     res.json(docs)
+    // })
+    model.find({}).select({"title":1, "createTime":1}).limit(2).sort({"_id": -1}).exec(function(err, docs){
+        res.json(docs)
+    });
 });
 // 发布文章
 router.post('/', (req, res) => {
@@ -18,13 +23,12 @@ router.post('/', (req, res) => {
         publish: req.body.publish,
         editTime: editTime
     }
-    new model(article).save((err, doc) => {
-        if(err){
-            res.json(err)
-        }else{
-            res.json(doc)
-        }
-    })
+
+    const na = new model(article);
+    na.save().then(function(doc) {
+        console.log("xxx")
+        res.json(doc)
+    });
 });
 
-module.exports = router
+export default router

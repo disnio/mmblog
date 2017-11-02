@@ -1,5 +1,7 @@
-const mongoose = require('mongoose');
-const moment = require('moment');
+
+import mongoose from 'mongoose'
+import moment from 'moment';
+mongoose.Promise = global.Promise;
 moment.locale('zh-cn');
 const Schema = mongoose.Schema;
 const articleSchema = new Schema({
@@ -12,15 +14,9 @@ const articleSchema = new Schema({
     publish: {
         type: Boolean,
         default: false
-    },
-    createTime: {
-        type: Date
-    },
-    editTime: {
-        type: Date,
-        default: Date.now
     }
 }, {
+    timestamps: true,
     versionKey: false
 });
 articleSchema.set('toJSON', {
@@ -31,11 +27,11 @@ articleSchema.set('toObject', {
     getters: true,
     virtuals: true
 });
-articleSchema.path('createTime').get(function(v) {
+articleSchema.path('createdAt').get(function(v) {
     return moment(v).format('lll');
 });
-articleSchema.path('editTime').get(function(v) {
+articleSchema.path('updatedAt').get(function(v) {
     return moment(v).format('lll');
 });
-
-module.exports = db.model('article', articleSchema);
+const article = mongoose.model('article', articleSchema);
+export default article;

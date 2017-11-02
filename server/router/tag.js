@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
+import model from '../model/tag';
 const router = express.Router();
-const model = require('../model/tag');
-const confirmToken = require('../middleware/confirmToken');
+// import confirmToken from '../middleware/confirmToken';
 
 router.get('/', function(req, res) {
     res.status(200).send("my model name is: ")
@@ -27,4 +27,4 @@ router.post('/', (req, res) => {
     })
 });
 
-module.exports = router
+export default router

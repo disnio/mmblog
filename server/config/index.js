@@ -1,5 +1,4 @@
-const fs = require('fs');
-let config = {
+const config = {
     app: {
         port: process.env.PORT || 8889,
         baseApi: '/api'
@@ -20,4 +19,4 @@ let config = {
     }
 }
 
-module.exports = config;
+export default config;

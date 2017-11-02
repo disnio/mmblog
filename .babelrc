@@ -1,20 +1,17 @@
 {
-  "presets": [
-        ["env", {
-            "modules": false,
-            "targets": {
-                "browsers": ["> 1%", "last 2 versions", "not ie <= 8"]
-            }
-        }],
-        "stage-2"
+    "presets": [
+      ["env", {
+        "targets": {
+          "node": "current"
+        }
+      }],
+      "stage-2",
+      "stage-3"
     ],
-  "plugins": ["transform-runtime",
-        ["component",
-            [{
-              "libraryName": "element-ui",
-              "styleLibraryName": "theme-default"
-            }]
-        ]
+    "plugins": [
+      "transform-async-to-generator",
+        "transform-es2015-modules-commonjs",
+        "transform-export-extensions"
     ],
-  "comments": false,
+  //"comments": false,
 }
