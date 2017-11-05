@@ -27,11 +27,6 @@ articleSchema.set('toObject', {
     getters: true,
     virtuals: true
 });
-articleSchema.path('createdAt').get(function(v) {
-    return moment(v).format('lll');
-});
-articleSchema.path('updatedAt').get(function(v) {
-    return moment(v).format('lll');
-});
+c
 const article = mongoose.model('article', articleSchema);
 export default article;

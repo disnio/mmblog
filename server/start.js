@@ -14,6 +14,7 @@ import mongoose from 'mongoose';
 
 import index from './router/index';
 import article from './router/article';
+import tags from './router/tag';
 
 const db = mongoose.connect(config.mongodb.url, {
     useMongoClient: true,
@@ -35,7 +36,7 @@ db.on('close', function() {
 });
 
 const app = express();
-console.log(Promise)
+
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'ejs');
 //要放在响应的最外
@@ -74,8 +75,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 
-app.use('/', index)
-app.use('/api/article', article)
+app.use('/', index);
+app.use('/api/article', article);
+app.use('/api/tags', tags);
 
 // server start
 
