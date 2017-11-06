@@ -4,10 +4,8 @@ mongoose.Promise = global.Promise;
 moment.locale('zh-cn');
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
-  name: String,
   username: String,
-  password: String,
-  avatar: String
+  password: String
 }, { versionKey: false, timestamps: true });
 userSchema.path('createdAt').get(function(v) {
     return moment(v).format('lll');

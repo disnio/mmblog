@@ -1,17 +1,20 @@
-
 import model from '../model/tag';
 import Article from '../model/article';
-
 // import confirmToken from '../middleware/confirmToken';
 
-
 export async function createTag(req, res) {
-
     const tagName = req.body.name;
 
     const tag = await model.findOne({name: tagName}).catch(err=>{
         res.status(500, err)
     });
+
+    if(tag !== null){
+        res.status(400).json({
+          success: false,
+          message: "标记已存在"
+        })
+    }
 
     const newTag = new model({
         name: tagName

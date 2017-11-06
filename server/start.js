@@ -11,10 +11,11 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import errorhandler from 'errorhandler';
 import mongoose from 'mongoose';
-
+import historyApiFallback from './middleware/historyApiFallback';
 import index from './router/index';
 import article from './router/article';
 import tags from './router/tag';
+import user from './router/user';
 
 const db = mongoose.connect(config.mongodb.url, {
     useMongoClient: true,
@@ -57,7 +58,7 @@ app.use(cookieParser());
 //跨域获取时候要禁止csrf
 // app.use(csrf());
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../client/static')));
 
 //日志在静态内容后面
 app.all('*', function (req, res, next) {
@@ -70,15 +71,27 @@ app.all('*', function (req, res, next) {
     next();
 });
 
-if (process.env.NODE_ENV === 'development') {
-    app.use(errorhandler())
-}
-
+// 对路由admin直接走historyApiFallback,而不是用服务端渲染
+app.use(historyApiFallback({
+  verbose: true,
+  index: '/admin.html',
+  rewrites: [
+    { from: /^\/admin$/, to: '/admin.html' },
+    { from: /^\/admin\/login/, to: '/admin.html' },
+  ],
+  path: /^\/admin/
+}));
 
 app.use('/', index);
 app.use('/api/article', article);
 app.use('/api/tags', tags);
+app.use('/api/user', user);
 
+if (process.env.NODE_ENV === 'development') {
+  app.use(errorhandler())
+
+  require('../client/build/setup-dev-server')(app)
+}
 // server start
 
 app.listen(config.app.port, function() {

@@ -4,12 +4,12 @@ import model from '../model/article';
 const router = express.Router();
 
 router.get('/', function(req, res) {
-    // model.find({}, function(err, docs){
-    //     res.json(docs)
-    // })
-    model.find({}).select({"title":1, "createTime":1}).limit(2).sort({"_id": -1}).exec(function(err, docs){
+    model.find({}, function(err, docs){
         res.json(docs)
-    });
+    })
+    // model.find({}).select({"title":1, "createTime":1}).limit(2).sort({"_id": -1}).exec(function(err, docs){
+    //     res.json(docs)
+    // });
 });
 // 发布文章
 router.post('/', (req, res) => {

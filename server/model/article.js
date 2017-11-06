@@ -27,6 +27,6 @@ articleSchema.set('toObject', {
     getters: true,
     virtuals: true
 });
-c
+
 const article = mongoose.model('article', articleSchema);
 export default article;
