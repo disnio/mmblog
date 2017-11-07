@@ -4,7 +4,7 @@
       <list></list>
     </div>
     <div class="admin__editor">
-      <editor></editor>
+      <!--<editor></editor>-->
     </div>
     <div class="admin__logout">
       <i class="fa fa-power-off" aria-hidden="true" @click="logout"></i>
@@ -22,7 +22,7 @@ import {
 export default {
   name: 'admin',
   components: {
-    Editor,
+//    Editor,
     List
   },
   data() {

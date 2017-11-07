@@ -1,32 +1,22 @@
 const path = require('path')
 const webpack = require('webpack')
-
 const clientConfig = require('./webpack.client.config')
+const hotMiddleware = require('webpack-hot-middleware')
+const devMiddleware = require('webpack-dev-middleware')
+const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = function setupDevServer (app) {
-  let bundle
-  let template
-
   const clientCompiler = webpack(clientConfig)
-  const devMiddleware = require('./express/dev.js')(clientCompiler, {
-    publicPath: clientConfig.output.publicPath,
-    stats: {
-      colors: true
-    },
-    //noInfo: true
-  })
-  app.use(devMiddleware)
 
-  
-  // clientCompiler.plugin('done', () => {
-  //   const fs = devMiddleware.fileSystem
-  //   const filePath = path.join(clientConfig.output.path, 'front.html')
-  //   console.log("clientPath",serverConfig.output.path)
-  //   if (fs.existsSync(filePath)) {
-  //     template = fs.readFileSync(filePath, 'utf-8')
-  //   }
-  // })
+  if(!isProd){
+    app.use(devMiddleware(clientCompiler, {
+      publicPath: clientConfig.output.publicPath,
+      stats: {
+        colors: true
+      },
+      //noInfo: true
+    }))
 
-  // hot middleware
-  app.use(require('./express/hot.js')(clientCompiler))
+    app.use(hotMiddleware(clientCompiler))
+  }
 }

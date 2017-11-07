@@ -1,99 +1,75 @@
-
-import config from './config';
-import express from 'express';
-import path from 'path';
-import morgan from 'morgan';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
+import config from './config'
+import express from 'express'
+import path from 'path'
+import morgan from 'morgan'
+import cookieParser from 'cookie-parser'
+import bodyParser from 'body-parser'
 // var methodOverride = require('method-override');
 // var session = require('express-session');
 // var csrf = require('csurf');
-import compression from 'compression';
-import errorhandler from 'errorhandler';
-import mongoose from 'mongoose';
-import historyApiFallback from './middleware/historyApiFallback';
-import index from './router/index';
-import article from './router/article';
-import tags from './router/tag';
-import user from './router/user';
+import compression from 'compression'
+import errorhandler from 'errorhandler'
+import db from './helper/db'
+import historyApiFallback from 'connect-history-api-fallback'
+import index from './router/index'
+import article from './router/article'
+import tags from './router/tag'
+import user from './router/user'
 
-const db = mongoose.connect(config.mongodb.url, {
-    useMongoClient: true,
-    promiseLibrary: Promise
-});
-
-db.once('open' ,() => {
-    console.log('连接数据库成功')
-})
-
-db.on('error', function(error) {
-    console.error('Error in MongoDb connection: ' + error);
-    mongoose.disconnect();
-});
-
-db.on('close', function() {
-    console.log('数据库断开，重新连接数据库');
-    mongoose.connect(config.url, {server:{auto_reconnect:true}});
-});
-
-const app = express();
+db();
+const app = express()
 
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'ejs');
 //要放在响应的最外
-app.use(morgan('dev'));
-
+app.use(morgan('dev'))
 app.use(compression({
-    threshold: 1
-}));
-
-app.use(bodyParser.json());
+  threshold: 1
+}))
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
-    extended: false
-}));
+  extended: false
+}))
 // app.use(methodOverride('_method'));
-app.use(cookieParser());
-
+app.use(cookieParser())
 // app.use(session({secret: 'pig', name: "_csrf", cookie: {maxAge: 60000}, resave: false, saveUninitialized: false}));
 //跨域获取时候要禁止csrf
-// app.use(csrf());
-
-app.use(express.static(path.join(__dirname, '../client/static')));
-
 //日志在静态内容后面
 app.all('*', function (req, res, next) {
-    // 带 cookie 发送文件响应必须明确设置域，不能简单的用 *
-    res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
-    res.header("Access-Control-Allow-Methods", "HEAD, PUT, POST, GET, DELETE, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With, Authorization, Content-Type, Content-Range, Content-Disposition, Content-Description");
-    res.header("Access-Control-Allow-Credentials", true);
-    // res.header("Content-Type", "application/json;charset=utf-8");
-    next();
-});
+  // 带 cookie 发送文件响应必须明确设置域，不能简单的用 *
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
+  res.header('Access-Control-Allow-Methods', 'HEAD, PUT, POST, GET, DELETE, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, Authorization, Content-Type, Content-Range, Content-Disposition, Content-Description')
+  res.header('Access-Control-Allow-Credentials', true)
+  // res.header("Content-Type", "application/json;charset=utf-8");
+  next()
+})
 
-// 对路由admin直接走historyApiFallback,而不是用服务端渲染
+// 路由直接走historyApiFallback,不用服务端渲染
 app.use(historyApiFallback({
   verbose: true,
-  index: '/admin.html',
+  index: '/front.html',
   rewrites: [
-    { from: /^\/admin$/, to: '/admin.html' },
-    { from: /^\/admin\/login/, to: '/admin.html' },
-  ],
-  path: /^\/admin/
-}));
+    {from: /^\/admin$/, to: '/admin.html'},
+    {from: /^\/admin\/login/, to: '/admin.html'},
+    {from: /^\/front/, to: '/front.html'}
+  ]
 
-app.use('/', index);
-app.use('/api/article', article);
-app.use('/api/tags', tags);
-app.use('/api/user', user);
+}))
+//一定要放在 fallback 后面
+const root = path.join(__dirname, '../client/dist')
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(errorhandler())
+require('../client/build/setup-dev-server')(app)
+app.use(express.static(root))
 
-  require('../client/build/setup-dev-server')(app)
-}
-// server start
+//服务端接口路由
+app.use('/', index)
+app.use('/api/articles', article)
+app.use('/api/tags', tags)
+app.use('/api/user', user)
+//错误处理
+app.use(errorhandler())
 
-app.listen(config.app.port, function() {
-    console.log("run in ", config.app.port)
-});
+app.listen(config.app.port, function () {
+  console.log('服务已运行在端口： ', config.app.port)
+})

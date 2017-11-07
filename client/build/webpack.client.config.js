@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const nodeModulesPath = resolve(__dirname, '../../node_modules');
 const CLIENT_FOLDER = resolve(__dirname, '../');
-const SERVER_FOLDER = resolve(__dirname, '../../server');
+
 const productionEnv = process.env.NODE_ENV === 'production' ? true : false;
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -23,27 +23,27 @@ let config = merge(base, {
       template: CLIENT_FOLDER + '/src/modules/admin/index.html',
       inject: 'body',
       chunks: productionEnv ? ['modules/manifest_admin', 'modules/vendor_admin', 'modules/admin'] : ['modules/admin'],
-      // minify: { // 压缩的方式
-      //   removeComments: true,
-      //   collapseWhitespace: true,
-      //   removeAttributeQuotes: true
-      // },
+      minify: { // 压缩的方式
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
       //chunksSortMode: 'dependency'
     }),
 
-    // new HtmlWebpackPlugin({
-    //   filename: 'front.html',
-    //   template: CLIENT_FOLDER + '/src/modules/front/index.html',
-    //   //inject: 'body',
-    //   //inject: false,
-    //   chunks: productionEnv ? ['modules/manifest_front', 'modules/vendor_front', 'modules/front'] : ['modules/front'],
-    //   minify: { // 压缩的方式
-    //     //removeComments: true,
-    //     collapseWhitespace: true,
-    //     removeAttributeQuotes: true
-    //   }
-    //   //chunksSortMode: 'dependency'
-    // }),
+    new HtmlWebpackPlugin({
+      filename: 'front.html',
+      template: CLIENT_FOLDER + '/src/modules/front/index.html',
+      inject: 'body',
+      //inject: false,
+      chunks: productionEnv ? ['modules/manifest_front', 'modules/vendor_front', 'modules/front'] : ['modules/front'],
+      minify: { // 压缩的方式
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      }
+      //chunksSortMode: 'dependency'
+    }),
     // 配置提取出的样式文件
     new ExtractTextPlugin('css/[name].[contenthash].css'),
 
@@ -56,58 +56,58 @@ let config = merge(base, {
 
 //添加热重载
 config.entry['modules/admin'].unshift('webpack-hot-middleware/client?reload=true')
-// config.entry['modules/front'].unshift('webpack-hot-middleware/client?reload=true')
+config.entry['modules/front'].unshift('webpack-hot-middleware/client?reload=true')
 
-if (process.env.NODE_ENV === 'production') {
+if (productionEnv) {
   // 删除devtool
   delete config.devtool;
   // 删除webpack-hot-middleware
   config.entry['modules/admin'].shift();
-  // config.entry['modules/front'].shift();
+  config.entry['modules/front'].shift();
   config.output.filename = '[name].[chunkhash:8].min.js';
   // 提取css
-  // config.module.rules[0].options.loaders = {
-  //   styl: ExtractTextPlugin.extract({
-  //     use: [{
-  //       loader: 'css-loader',
-  //       options: {
-  //         minimize: true,
-  //         sourceMap: true
-  //       }
-  //     }, {
-  //       loader: 'stylus-loader',
-  //       options: {
-  //         sourceMap: true
-  //       }
-  //     }],
-  //     fallback: 'vue-style-loader'
-  //   }),
-  //   stylus: ExtractTextPlugin.extract({
-  //     use: [{
-  //       loader: 'css-loader',
-  //       options: {
-  //         minimize: true,
-  //         sourceMap: true
-  //       }
-  //     }, {
-  //       loader: 'stylus-loader',
-  //       options: {
-  //         sourceMap: true
-  //       }
-  //     }],
-  //     fallback: 'vue-style-loader'
-  //   }),
-  //   css: ExtractTextPlugin.extract({
-  //     use: [{
-  //       loader: 'css-loader',
-  //       options: {
-  //         minimize: true,
-  //         sourceMap: true
-  //       }
-  //     }],
-  //     fallback: 'vue-style-loader'
-  //   })
-  // };
+  config.module.rules[0].options.loaders = {
+    styl: ExtractTextPlugin.extract({
+      use: [{
+        loader: 'css-loader',
+        options: {
+          minimize: true,
+          sourceMap: true
+        }
+      }, {
+        loader: 'stylus-loader',
+        options: {
+          sourceMap: true
+        }
+      }],
+      fallback: 'vue-style-loader'
+    }),
+    stylus: ExtractTextPlugin.extract({
+      use: [{
+        loader: 'css-loader',
+        options: {
+          minimize: true,
+          sourceMap: true
+        }
+      }, {
+        loader: 'stylus-loader',
+        options: {
+          sourceMap: true
+        }
+      }],
+      fallback: 'vue-style-loader'
+    }),
+    css: ExtractTextPlugin.extract({
+      use: [{
+        loader: 'css-loader',
+        options: {
+          minimize: true,
+          sourceMap: true
+        }
+      }],
+      fallback: 'vue-style-loader'
+    })
+  };
   // 删除HotModuleReplacementPlugin和NamedModulesPlugin
   config.plugins.shift();
   config.plugins.shift();
@@ -172,5 +172,5 @@ if (process.env.NODE_ENV === 'production') {
     }])
   ]);
 }
-console.log(config)
+
 module.exports = config;

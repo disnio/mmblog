@@ -1,12 +1,7 @@
 const { resolve, join } = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const nodeModulesPath = resolve(__dirname, '../../node_modules');
 const CLIENT_FOLDER = resolve(__dirname, '../');
-const SERVER_FOLDER = resolve(__dirname, '../../server');
-const productionEnv = process.env.NODE_ENV === 'production' ? true : false;
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 let config = {
   devtool: '#cheap-module-eval-source-map',
@@ -14,9 +9,9 @@ let config = {
     'modules/admin': [
       CLIENT_FOLDER + '/src/modules/admin/app'
     ],
-    // 'modules/front': [
-    //   CLIENT_FOLDER + '/src/modules/front/entry-client'
-    // ]
+    'modules/front': [
+      CLIENT_FOLDER + '/src/modules/front/entry-client'
+    ]
   },
   output: {
     path: CLIENT_FOLDER + '/dist',
