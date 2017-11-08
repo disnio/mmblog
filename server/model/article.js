@@ -7,10 +7,10 @@ const Schema = mongoose.Schema;
 const articleSchema = new Schema({
     title: String,
     content: String,
-    // tags: [{
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'tag'
-    // }],
+    tags: [{
+        type: Schema.Types.ObjectId,
+        ref: 'tag'
+    }],
     publish: {
         type: Boolean,
         default: false

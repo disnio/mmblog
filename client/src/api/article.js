@@ -11,7 +11,7 @@ export default {
     return Axios.get(`/api/articles?tag=${tag}&page=${page}&limit=${limit}`)
   },
   getAllPublishArticles (tag = '', page = 1, limit = 0) {
-    return Axios.get(`/api/publishArticles?tag=${tag}&page=${page}&limit=${limit}&publish=1`)
+    return Axios.get(`/api/articles?tag=${tag}&page=${page}&limit=${limit}&publish=1`)
   },
   saveArticle (id, article) {
     return Axios.patch('/api/articles/' + id, article)

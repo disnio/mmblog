@@ -10,10 +10,11 @@ export async function createTag(req, res) {
     });
 
     if(tag !== null){
-        res.status(400).json({
-          success: false,
-          message: "标记已存在"
+        res.json({
+          success: true,
+          tag
         })
+        return;
     }
 
     const newTag = new model({
@@ -23,7 +24,10 @@ export async function createTag(req, res) {
         res.json(err)
     });
 
-    res.json(tagResult);
+    res.json({
+      success: true,
+      tagResult
+    });
 
 }
 
@@ -32,7 +36,7 @@ export async function getTags(req, res) {
         res.status(500, err)
     });
 
-    res.json(tags);
+    res.json({success: true, tags});
 }
 
 export async function modifyTag(req, res) {
@@ -42,7 +46,7 @@ export async function modifyTag(req, res) {
     const tag = await Article.findByIdAndUpdate(id, {$set: {name: name}}).catch(err=>{
         res.status(500, err)
     });
-    res.json(tag);
+    res.json({success: true, tag});
 }
 
 export async function deleteTag(req, res) {

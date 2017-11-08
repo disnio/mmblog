@@ -32,12 +32,14 @@ export default {
         "username": this.username,
         "password": this.password
       }
+      // 分发登录 action
       this.$store.dispatch('createToken', info).then((res) => {
         if(res.data.success) {
           this.$message({
             message: '登陆成功',
             type: 'success'
           });
+          // 无路由可以通过location
           this.$router.push('/admin');
         }
       }).catch((err) => {

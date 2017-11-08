@@ -2,9 +2,9 @@
   <div class="sideBox">
     <div class="sideBox__mask" :class="{ 'sideBox__mask--show': sideBoxOpen}" @click="closeSideBox"></div>
     <div class="sideBox__main" :class="{ 'sideBox__main--open': sideBoxOpen}">
-      <img src="http://7xp9v5.com1.z0.glb.clouddn.com/touxiang.png" alt="" class="sideBox__img" @click="backToIndex">
-      <p class="sideBox__name">小深刻的秋鼠</p>
-      <p class="sideBox__motto">Love Life, Love sharing</p>
+      <img src="https://avatars1.githubusercontent.com/u/5300527?s=460&v=4" alt="" class="sideBox__img" @click="backToIndex">
+      <p class="sideBox__name">Allen</p>
+      <p class="sideBox__motto">多做少说</p>
       <ul class="sideBox__iconList">
         <li v-for="icon in iconList" class="sideBox__iconItem">
           <a :href="icon.href"><i class="iconfont" :class="'icon-'+icon.name"></i></a>
@@ -46,7 +46,7 @@ export default {
       scrollTop: 0,
       iconList: [{
         name: 'github',
-        href: 'https://github.com/BUPT-HJM'
+        href: 'https://github.com/disnio'
       }]
     }
   },

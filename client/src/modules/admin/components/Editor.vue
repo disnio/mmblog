@@ -105,7 +105,7 @@ export default {
       const info = {
         title: this.articleTitle,
         content: this.articleContent,
-        publish: false,
+        publish: 0,
         tags: this.currentArticle.tags
       }
       this.$store.dispatch('createArticle', info).then((res) => {
@@ -114,10 +114,7 @@ export default {
             message: '创建成功',
             type: 'success'
           });
-          // 这里不再需要getAllArticles因为有watch函数监听变化
-          //this.getAllArticles().then(res => {
-          //  this.clearSelect();
-          //})
+
           this.clearSelect();
         }
       }).catch((err) => {
@@ -129,20 +126,11 @@ export default {
       title = this.articleTitle,
       content = this.articleContent,
       button = false
-    }) {
-      let abstract;
-      if (content.indexOf("<!--more-->") !== -1) {
-        abstract = content.split("<!--more-->")[0];
-      } else {
-        this.$message.error('请填写摘要');
-        return;
-      }
+    }){
       const article = {
         title: title,
         content: content,
-        abstract: abstract,
-        tags: this.currentArticle.tags,
-        lastEditTime: new Date()
+        tags: this.currentArticle.tags
       }
       this.$store.dispatch('saveArticle', {
         id: this.currentArticle.id,
@@ -208,8 +196,7 @@ export default {
               message: '删除成功',
               type: 'success'
             });
-            //this.getAllArticles();
-            //因为clearSelect就可以更新全部文章了
+
             this.clearSelect();
           }
         }).catch((err) => {

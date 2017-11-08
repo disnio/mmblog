@@ -12,7 +12,7 @@ const state = {
     title: '',
     tags: [],
     save: true,
-    publish: false
+    publish: 0
   },
   allPage: 1,
   curPage: 1,
@@ -72,16 +72,14 @@ const actions = {
         index: -1,
         title: '',
         content: '<!--more-->',
-        title: '',
         save: true,
-        publish: false,
+        publish: 0,
         tags: []
       }
     } else {
       article = {
         id: state.articleList[index].id,
         index: index,
-        title: state.articleList[index].title,
         content: state.articleList[index].content,
         title: state.articleList[index].title,
         save: true,
@@ -133,9 +131,8 @@ const actions = {
             index: 0,
             title: '',
             content: '',
-            title: '',
             save: false,
-            publish: false
+            publish: 0
           }
           commit(types.GET_CURRENT_ARTICLE, article)
         }
@@ -158,7 +155,7 @@ const actions = {
   getAllTags({ commit, state }) {
     return tagApi.getAllTags().then(res => {
       if (res.data.success) {
-        commit(types.GET_ALL_TAGS, res.data.tagArr);
+        commit(types.GET_ALL_TAGS, res.data.tags);
       }
       return new Promise((resolve, reject) => {
         resolve(res);
@@ -204,13 +201,11 @@ const mutations = {
     if (now) {
       now.title = article.title;
       now.content = article.content;
-      now.abstract = article.abstract;
       now.tags = article.tags;
-      now.lastEditTime = article.lastEditTime;
     }
   },
   [types.PUBLISH_ARTICLE](state) {
-    state.currentArticle.publish = true;
+    state.currentArticle.publish = 1;
   },
   [types.GET_ALL_ARTICLES](state, { articleList, allPage, curPage }) {
     state.articleList = articleList;
@@ -224,12 +219,12 @@ const mutations = {
     state.currentArticle.save = false;
   },
   [types.PUBLISH_ARTICLE](state, id) {
-    state.currentArticle.publish = true;
-    state.articleList.find(p => p.id === id).publish = true;
+    state.currentArticle.publish = 1;
+    state.articleList.find(p => p.id === id).publish = 1;
   },
   [types.NOT_PUBLISH_ARTICLE](state, id) {
-    state.currentArticle.publish = false;
-    state.articleList.find(p => p.id === id).publish = false;
+    state.currentArticle.publish = 0;
+    state.articleList.find(p => p.id === id).publish = 0;
   },
   [types.DELETE_ARTICLE](state, index) {
     state.articleList.splice(index, 1)

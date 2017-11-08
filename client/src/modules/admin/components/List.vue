@@ -18,7 +18,7 @@
           <i class="fa fa-tag" aria-hidden="true"></i>
           <span v-for="tag in article.tags"> {{tag.name}}</span>
           <p class="list__article__item__createTime"><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp; {{article.createTime}}</p>
-          <p class="list__article__item__publish" v-if="article.publish">
+          <p class="list__article__item__publish" v-if="article.publish===1">
             已发布
           </p>
         </div>
