@@ -1,6 +1,6 @@
 const config = {
     app: {
-        port: process.env.PORT || 8889,
+        port: 8000,
         baseApi: '/api'
     },
     mongodb: {

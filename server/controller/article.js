@@ -35,7 +35,6 @@ export async function createArticle (req, res) {
     res.status(500, err)
   })
   await model.populate(nares, {path: 'tag'}, function (err, result) {
-    console.log("create article: ", result)
     nares = result
   })
   res.json({
@@ -57,12 +56,10 @@ export async function getArticles (req, res) {
   if (page !== 0) {
     skip = limit * (page - 1)
   }
-  console.log("publish: ", publishObj)
   if (tag == '') {
     aArr = await model.find(publishObj).populate('tags').sort({createdAt: -1})
       .limit(limit)
       .skip(skip).catch(err => {
-        console.log('error xxx',err)
         return new Promise((resolve, reject) => {
           resolve([])
         })
@@ -84,7 +81,6 @@ export async function getArticles (req, res) {
       res.status(500, err)
     })
   }
-  console.log("arr: ", aArr, "count: ", aCount, "limit: ", limit)
   pageNum = limit == 0 ? 1: Math.ceil(aCount / limit)
   res.json({
     success: true,
