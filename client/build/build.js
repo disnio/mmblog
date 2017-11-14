@@ -1,19 +1,22 @@
 import ora from 'ora'
 import path from 'path'
 import chalk from 'chalk'
-import shell from 'shelljs'
+// import shell from 'shelljs'
 import webpack from 'webpack'
+require('shelljs/global')
 import config from '../config'
-import webpackConfig from './webpack.prod.conf'
+import webpackConfig from './webpack.client-prod.config'
 
 const spinner = ora('构建产品...')
 spinner.start()
+
 const assetsPath = path.join(config.build.assetsRoot, config.build.assetsSubDirectory)
-shell.rm('-rf', assetsPath)
-shell.mkdir('-p', assetsPath)
-shell.config.silent = true
-shell.cp('-R', 'static/*', assetsPath)
-shell.config.silent = false
+console.log(assetsPath)
+rm('-rf', assetsPath)
+mkdir('-p', assetsPath)
+config.silent = true
+cp('-R', './client/static/*', assetsPath)
+config.silent = false
 
 webpack(webpackConfig, function (err, stats) {
   spinner.stop()
@@ -27,8 +30,5 @@ webpack(webpackConfig, function (err, stats) {
   }) + '\n\n')
 
   console.log(chalk.cyan('  Build complete.\n'))
-  console.log(chalk.yellow(
-    '  Tip: built files are meant to be served over an HTTP server.\n' +
-    '  Opening index.html over file:// won\'t work.\n'
-  ))
+
 })

@@ -1,34 +1,30 @@
-import config from './config'
+import config from '../config'
 import express from 'express'
 import opn from 'opn'
-import morgan from 'morgan'
-import errorhandler from 'errorhandler'
+import webpack from 'webpack'
 import proxyMiddleware from 'http-proxy-middleware'
 import historyApiFallback from 'connect-history-api-fallback'
-const webpack = require('webpack')
-const clientConfig = require('./webpack.client.config')
-const hotMiddleware = require('webpack-hot-middleware')
-const devMiddleware = require('webpack-dev-middleware')
+import hotMiddleware from 'webpack-hot-middleware'
+import devMiddleware from 'webpack-dev-middleware'
+
+import clientConfig from './webpack.client-dev.config'
 
 const isProd = process.env.NODE_ENV === 'production'
-const port = process.env.PORT || config.dev.port
 const autoOpenBrowser = !!config.dev.autoOpenBrowser
 const app = express()
 
-// 可以采用代理分离
-
-let proxypath;
+let proxypath
 const context = config.dev.context
-switch(process.env.NODE_ENV){
+switch (process.env.NODE_ENV) {
   case 'development':
   case 'production':
-    proxypath = 'http://localhost:' + config.server.port;
-    break;
+    proxypath = 'http://localhost:' + config.server.port
+    break
   case 'online':
-    proxypath = 'http://www.wuaim.com:' + config.server.port;
-    break;
+    proxypath = 'http://www.wuaim.com:' + config.server.port
+    break
   default:
-    proxypath = config.dev.proxypath;
+    proxypath = config.dev.proxypath
 }
 const proxyOptions = {
   target: proxypath,
@@ -51,30 +47,30 @@ app.use(historyApiFallback({
   ]
 }))
 //一定要放在 fallback 后面
-if (!isProd) {
-  const clientCompiler = webpack(clientConfig)
-  app.use(devMiddleware(clientCompiler, {
-    publicPath: clientConfig.output.publicPath,
-    stats: {
-      colors: true
-    },
-    //noInfo: true
-  }))
 
-  app.use(hotMiddleware(clientCompiler))
+const clientCompiler = webpack(clientConfig)
+app.use(devMiddleware(clientCompiler, {
+  publicPath: clientConfig.output.publicPath,
+  stats: {
+    colors: true
+  },
+  //noInfo: true
+}))
 
-  devMiddleware.waitUntilValid(function () {
-    console.log('> dev server start\n')
+app.use(hotMiddleware(clientCompiler))
+// force page reload when html-webpack-plugin template changes
+clientCompiler.plugin('compilation', function(compilation) {
+  compilation.plugin('html-webpack-plugin-after-emit', function(data, cb) {
+    hotMiddleware.publish({
+      action: 'reload'
+    })
+    cb()
   })
-}else {
-  console.log("server production")
-}
+})
 
-app.use(morgan('dev'))
-app.use(errorhandler())
+const uri = 'http://localhost:' + config.dev.devport
 
-const uri = 'http://localhost:' + port
-app.listen(port, function (err) {
+app.listen(config.dev.devport, function (err) {
   if (err) {
     console.log(err)
     return
@@ -82,5 +78,7 @@ app.listen(port, function (err) {
   if (autoOpenBrowser) {
     opn(uri)
   }
-  console.log('开发服务器已运行在端口： ', port)
+  console.log('开发服务器已运行在端口： ', config.dev.devport)
 })
+
+module.exports = app

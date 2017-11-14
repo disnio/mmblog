@@ -1,9 +1,11 @@
-const { resolve, join } = require('path');
-const webpack = require('webpack');
+import { resolve } from 'path';
 const nodeModulesPath = resolve(__dirname, '../../node_modules');
 const CLIENT_FOLDER = resolve(__dirname, '../');
+import vueLoaderConfig from './vue-loader.conf';
+import config from '../config'
+import utils from './utils'
 
-let config = {
+let baseConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
     'modules/admin': [
@@ -16,7 +18,9 @@ let config = {
   output: {
     path: CLIENT_FOLDER + '/dist',
     filename: '[name].js',
-    publicPath: '/'
+    publicPath: process.env.NODE_ENV === 'production'
+      ? config.build.assetsPublicPath
+      : config.dev.assetsPublicPath
   },
   externals: {
     'simplemde': 'SimpleMDE'
@@ -26,45 +30,31 @@ let config = {
     rules: [{
       test: /\.vue$/,
       loader: 'vue-loader',
-      options: {
-        loaders: {
-          styl: ['vue-style-loader', 'css-loader?minimize', 'stylus-loader'],
-          stylus: ['vue-style-loader', 'css-loader?minimize', 'stylus-loader'],
-          css: ['vue-style-loader', 'css-loader?minimize'],
-        },
-        preserveWhitespace: false,
-        postcss: [require('autoprefixer')({ browsers: ['last 7 versions'] })]
-      }
+      options: vueLoaderConfig
     }, {
       test: /\.js$/,
       loader: 'babel-loader',
+      include: [resolve('src')],
       exclude: nodeModulesPath
-    }, {
-      test: /\.styl$/,
-      use: ['style-loader', 'css-loader?minimize', 'stylus-loader'],
-      include: CLIENT_FOLDER
-    }, {
-      test: /\.css$/,
-      use: ['style-loader', 'css-loader?minimize']
     }, {
       test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
       loader: 'url-loader',
       options: {
         limit: 10000,
-        name: 'img/[name].[hash:7].[ext]'
+        name: utils.assetsPath('img/[name].[hash:7].[ext]')
       }
     }, {
       test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
       loader: 'url-loader',
       options: {
         limit: 10000,
-        name: 'fonts/[name].[hash:7].[ext]'
+        name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
       }
     }]
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
-    modules: [nodeModulesPath],
+    modules: [resolve(__dirname, '../src'), nodeModulesPath],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       'vuex$': 'vuex/dist/vuex.esm.js',
@@ -72,6 +62,7 @@ let config = {
       'simplemde$': 'simplemde/dist/simplemde.min.js',
       'highlight.js$': 'highlight.js/lib/highlight.js',
       'fastclick': 'fastclick/lib/fastclick.js',
+      '@': resolve('src'),
       'lib': resolve(__dirname, '../src/lib'),
       'api': resolve(__dirname, '../src/api'),
       'publicComponents': resolve(__dirname, '../src/components'),
@@ -81,4 +72,4 @@ let config = {
   //cache: true
 }
 
-module.exports = config;
+module.exports = baseConfig;

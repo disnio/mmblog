@@ -9,24 +9,25 @@ module.exports = {
         env: {
             NODE_ENV: '"production"'
         },
-        index: path.resolve(__dirname, '../elm/index.html'),
-        assetsRoot: path.resolve(__dirname, '../elm'),
+        assetsRoot: path.resolve(__dirname, '../dist'),
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         productionSourceMap: true,
         // Surge or Netlify already gzip all static assets for you.
         // Before setting to `true`, make sure to:
         // npm install --save-dev compression-webpack-plugin
-        productionGzip: false,
+        productionGzip: true,
         productionGzipExtensions: ['js', 'css']
     },
     dev: {
         env: {
             NODE_ENV: '"development"'
         },
-        port: 8889,
+        port: 8000,
+        devport: 8889,
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
+        autoOpenBrowser: true,
         context: [ //代理路径
             '/api'
         ],
