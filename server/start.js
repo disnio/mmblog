@@ -53,18 +53,9 @@ app.use('/api/articles', article)
 app.use('/api/tags', tags)
 app.use('/api/user', user)
 
-// 直接做服务器对整个项目，包括API和 dist 生成文件的静态服务器，路由直接走historyApiFallback,不用服务端渲染
-app.use(historyApiFallback({
-  verbose: true,
-  index: '/front.html',
-  rewrites: [
-    {from: /^\/admin$/, to: '/admin.html'},
-    {from: /^\/admin\/login/, to: '/admin.html'},
-    {from: /^\/front/, to: '/front.html'}
-  ]
-}))
+
 //一定要放在 fallback 后面
-app.use(express.static(path.join(__dirname, '../client/dist')))
+app.use(express.static(path.join(__dirname, './public')))
 
 //错误处理
 //日志在静态内容后面
