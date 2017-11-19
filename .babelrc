@@ -8,18 +8,18 @@
           //"forceAllTransforms": true
         },
         "debug": true,
-        "useBuiltIns": true,
-        "include": ["transform-es2015-shorthand-properties"]
+        //"useBuiltIns": true,
+        //"include": ["transform-es2015-shorthand-properties"]
       }
     ],
     "stage-0",
-    "stage-1",
-    "stage-2",
-    "stage-3"
+    //"stage-1",
+    //"stage-2",
+    //"stage-3"
   ],
   "plugins": [
+    "transform-runtime",
     ["transform-class-properties", { "spec": true }],
-    "transform-object-rest-spread",
-    "transform-decorators-legacy",
+    "transform-object-rest-spread"
   ]
 }

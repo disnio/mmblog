@@ -12,7 +12,7 @@ import bodyParser from 'body-parser'
 import compression from 'compression'
 import errorhandler from 'errorhandler'
 // 服务端 url 重定向
-import historyApiFallback from 'connect-history-api-fallback'
+// import historyApiFallback from 'connect-history-api-fallback'
 
 import db from './helper/db'
 import index from './router/index'
@@ -27,11 +27,11 @@ const app = express()
 // 服务端模板引擎
 // app.set('view engine', 'ejs');
 app.use(compression({
-  threshold: 1
+    threshold: 1
 }))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
-  extended: false
+    extended: false
 }))
 // app.use(methodOverride('_method'));
 app.use(cookieParser())
@@ -39,14 +39,24 @@ app.use(cookieParser())
 //跨域获取时候要禁止csrf
 
 app.all('*', function (req, res, next) {
-  // 带 cookie 发送文件响应必须明确设置域，不能简单的用 *
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
-  res.header('Access-Control-Allow-Methods', 'HEAD, PUT, POST, GET, DELETE, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, Authorization, Content-Type, Content-Range, Content-Disposition, Content-Description')
-  res.header('Access-Control-Allow-Credentials', true)
-  // res.header("Content-Type", "application/json;charset=utf-8");
-  next()
+    // 带 cookie 发送文件响应必须明确设置域，不能简单的用 *
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
+    res.header('Access-Control-Allow-Methods', 'HEAD, PUT, POST, GET, DELETE, OPTIONS')
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With, Authorization, Content-Type, Content-Range, Content-Disposition, Content-Description')
+    res.header('Access-Control-Allow-Credentials', true)
+    // res.header("Content-Type", "application/json;charset=utf-8");
+    next()
 })
+
+// app.use(historyApiFallback({
+//     verbose: true,
+//     index: '/front.html',
+//     rewrites: [
+//         {from: /^\/admin$/, to: '/admin.html'},
+//         {from: /^\/admin\/login/, to: '/admin.html'},
+//         {from: /^\/front/, to: '/front.html'}
+//     ]
+// }));
 //服务端接口路由
 app.use('/', index)
 app.use('/api/articles', article)
@@ -64,5 +74,5 @@ app.use(errorhandler())
 
 const uri = 'http://localhost:' + config.app.port
 app.listen(config.app.port, function () {
-  console.log('服务已运行在端口： ', config.app.port)
+    console.log('服务已运行在端口： ', config.app.port)
 })
