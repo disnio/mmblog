@@ -85,6 +85,7 @@ export async function getArticles (req, res) {
   res.json({
     success: true,
     articleArr: aArr,
+    aCount: aCount,
     allPage: pageNum
   })
 }

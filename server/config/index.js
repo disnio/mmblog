@@ -4,7 +4,7 @@ const config = {
         baseApi: '/api'
     },
     mongodb: {
-        url: 'mongodb://localhost:27017/mmblog'
+        url: 'mongodb://120.27.33.179:27017/mmblog'
     },
     jwt: {
         secret: 'allen'
